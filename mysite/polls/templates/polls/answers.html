@@ -1,0 +1,17 @@
+<h1>{{poll.poll_title}}</h1>
+{% for q in poll.question_set.all %}
+<h2>{{q.id}} {{q.question_text}}</h2>
+	{% for ch in q.choice_set.all %}
+	<h3>{{ch.id}} {{ch.choice_text}}</h3>
+	{% endfor %}
+	<p>Data: {{data}}</p>
+	<p>Answer: {{answer}}</p>
+
+	<p>Body: {{request.POST.items}}</p>
+
+	{%  for key in request.POST %}
+     <p>{{ request.POST[key]}}</p>
+   	{% endfor %}
+
+{% endfor %}
+ahoj

@@ -1,0 +1,63 @@
+<h1>{{ poll.poll_title }}</h1>
+
+{% for question in poll.questions.all %}
+	<h2>{{ question.question_text }}</h2>
+
+	<ul>
+	{% for choice in question.choices.all %}
+    	<li>{{ choice.choice_text }} -- {{ choice.answer_set.count }} answers</li>
+	{% endfor %}
+	</ul>
+	<div style="max-width: 300px">
+  		<canvas id="myChart_{{question.id}}"></canvas>
+	</div>
+
+{% endfor %}
+
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+
+<script>
+
+  var json;
+
+  $.ajax({
+  	url: 'http://localhost:8000/polls/api/polls/{{poll.id}}',
+  	success: function(result) {
+  		json=result;
+  	},
+  	async: false
+  });
+
+  console.log(json);
+
+  for(var i = 0; i < json.questions.length; i++) {
+  	console.log(json.questions[i].choices);
+  	const ctx = document.getElementById('myChart_'+json.questions[i].id);
+  	var labels = json.questions[i].choices.map((e)=>e['choice_text']);
+  	var data = json.questions[i].choices.map((e)=>e['answer_count']);
+  	 new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: labels,
+      datasets: [{
+        label: '# of Answers',
+        data: data,
+        borderWidth: 1
+      }]
+    },
+    options: {
+      scales: {
+        y: {
+          beginAtZero: true
+        }
+      }
+    }
+  });
+  }
+
+
+</script>
